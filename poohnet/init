@@ -3,6 +3,7 @@ if [ -z $1 ]
 then
     echo "No parameter passed"
     echo "Usage: ./init testnet 1"
+    echo "Usage: ./init testnet-pos 1"
     echo "Usage: ./init mainnet 1"
     exit
 else
@@ -24,14 +25,14 @@ mkdir -p $HOME/.pooh/el
 mkdir $HOME/.pooh/el/geth
 mkdir $HOME/.pooh/el/keystore
 
-genesis_file="genesis.json"
-
 if [ "$config" = "mainnet" ]
 then
   config_folder="config"
+  genesis_file="genesis.json"
 elif [ "$config" = "pos" ]
 then
   config_folder="config4pos"
+  genesis_file="genesis.json"
 elif [ "$config" = "devnet" ]
 then
   config_folder="config"
@@ -40,6 +41,10 @@ elif [ "$config" = "testnet" ]
 then
   config_folder="config"
   genesis_file="genesis_testnet.json"
+elif [ "$config" = "testnet-pos" ]
+then
+  config_folder="config4pos"
+  genesis_file="genesis.json"
 else
   echo "Invalid config parameter"
   exit
