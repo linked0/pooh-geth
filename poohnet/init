@@ -40,6 +40,10 @@ elif [ "$config" = "testnet" ]
 then
   config_folder="config"
   genesis_file="genesis_testnet.json"
+elif [ "$config" = "zksync" ]
+then
+  config_folder="config"
+  genesis_file="genesis_zksync.json"
 else
   echo "Invalid config parameter"
   exit
