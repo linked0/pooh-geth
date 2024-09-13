@@ -161,6 +161,8 @@ func (pre *Prestate) Apply(vmConfig vm.Config, chainConfig *params.ChainConfig,
 		misc.ApplyDAOHardFork(statedb)
 	}
 
+	log.Warn("execution > Apply: ", "txs", txs)
+
 	for i, tx := range txs {
 		msg, err := core.TransactionToMessage(tx, signer, pre.Env.BaseFee)
 		if err != nil {

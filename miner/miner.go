@@ -82,6 +82,7 @@ type Miner struct {
 }
 
 func New(eth Backend, config *Config, chainConfig *params.ChainConfig, mux *event.TypeMux, engine consensus.Engine, isLocalBlock func(header *types.Header) bool) *Miner {
+	log.Error(log.Pmsg("NewTxsEvent:Miner", "miner>New"))
 	miner := &Miner{
 		mux:     mux,
 		eth:     eth,
@@ -151,6 +152,7 @@ func (miner *Miner) update() {
 				events.Unsubscribe()
 			}
 		case <-miner.startCh:
+			log.Error(log.Pmsg("Starting mining operation"))
 			if canStart {
 				miner.worker.start()
 			}
@@ -166,6 +168,7 @@ func (miner *Miner) update() {
 }
 
 func (miner *Miner) Start() {
+	log.Error(log.Pmsg("Starting mining operation"))
 	miner.startCh <- struct{}{}
 }
 

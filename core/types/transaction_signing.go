@@ -24,6 +24,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
 )
 
@@ -134,6 +135,7 @@ func MustSignNewTx(prv *ecdsa.PrivateKey, s Signer, txdata TxData) *Transaction 
 // signing method. The cache is invalidated if the cached signer does
 // not match the signer used in the current call.
 func Sender(signer Signer, tx *Transaction) (common.Address, error) {
+	log.Error(log.Pmsg("types>signer>Sender: "), "tx", tx)
 	if sc := tx.from.Load(); sc != nil {
 		sigCache := sc.(sigCache)
 		// If the signer used to derive from in a previous
@@ -149,6 +151,7 @@ func Sender(signer Signer, tx *Transaction) (common.Address, error) {
 		return common.Address{}, err
 	}
 	tx.from.Store(sigCache{signer: signer, from: addr})
+	log.Error(log.Pmsg("types>signer>Sender: end"))
 	return addr, nil
 }
 
@@ -188,6 +191,7 @@ func NewCancunSigner(chainId *big.Int) Signer {
 }
 
 func (s cancunSigner) Sender(tx *Transaction) (common.Address, error) {
+	log.Warn("JJJ types > cancunSigner > Sender: ", "tx", tx)
 	if tx.Type() != BlobTxType {
 		return s.londonSigner.Sender(tx)
 	}
@@ -256,6 +260,7 @@ func NewLondonSigner(chainId *big.Int) Signer {
 }
 
 func (s londonSigner) Sender(tx *Transaction) (common.Address, error) {
+	log.Warn("JJJ types > london > Sender: ", "tx", tx)
 	if tx.Type() != DynamicFeeTxType {
 		return s.eip2930Signer.Sender(tx)
 	}
@@ -328,6 +333,7 @@ func (s eip2930Signer) Equal(s2 Signer) bool {
 }
 
 func (s eip2930Signer) Sender(tx *Transaction) (common.Address, error) {
+	log.Warn("JJJ types > eip2930 > Sender: ", "tx", tx)
 	V, R, S := tx.RawSignatureValues()
 	switch tx.Type() {
 	case LegacyTxType:
@@ -431,6 +437,7 @@ func (s EIP155Signer) Equal(s2 Signer) bool {
 var big8 = big.NewInt(8)
 
 func (s EIP155Signer) Sender(tx *Transaction) (common.Address, error) {
+	log.Warn("JJJ types > eip155 > Sender: ", "tx", tx)
 	if tx.Type() != LegacyTxType {
 		return common.Address{}, ErrTxTypeNotSupported
 	}
@@ -494,6 +501,7 @@ func (hs HomesteadSigner) SignatureValues(tx *Transaction, sig []byte) (r, s, v 
 }
 
 func (hs HomesteadSigner) Sender(tx *Transaction) (common.Address, error) {
+	log.Warn("JJJ types > Homestead > Sender: ", "tx", tx)
 	if tx.Type() != LegacyTxType {
 		return common.Address{}, ErrTxTypeNotSupported
 	}
@@ -515,6 +523,7 @@ func (s FrontierSigner) Equal(s2 Signer) bool {
 }
 
 func (fs FrontierSigner) Sender(tx *Transaction) (common.Address, error) {
+	log.Warn("JJJ types > frontier > Sender: ", "tx", tx)
 	if tx.Type() != LegacyTxType {
 		return common.Address{}, ErrTxTypeNotSupported
 	}

@@ -24,6 +24,7 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // TxStatus is the current status of a transaction as seen by the pool.
@@ -198,6 +199,7 @@ func (p *TxPool) Get(hash common.Hash) *Transaction {
 // to the large transaction churn, add may postpone fully integrating the tx
 // to a later point to batch multiple ones together.
 func (p *TxPool) Add(txs []*Transaction, local bool, sync bool) []error {
+	log.Error(log.Pmsg("txpool>Add: "), "txs", txs, "local", local, "sync", sync)
 	// Split the input transactions between the subpools. It shouldn't really
 	// happen that we receive merged batches, but better graceful than strange
 	// errors.
@@ -255,6 +257,7 @@ func (p *TxPool) Pending(enforceTips bool) map[common.Address][]*types.Transacti
 // SubscribeNewTxsEvent registers a subscription of NewTxsEvent and starts sending
 // events to the given channel.
 func (p *TxPool) SubscribeNewTxsEvent(ch chan<- core.NewTxsEvent) event.Subscription {
+	log.Error(log.Pmsg("NewTxsEvent", "txpool>SubscribeNewTxsEvent"), "len(p.subpools)", len(p.subpools))
 	subs := make([]event.Subscription, len(p.subpools))
 	for i, subpool := range p.subpools {
 		subs[i] = subpool.SubscribeTransactions(ch)

@@ -569,6 +569,8 @@ func (c *Clique) Prepare(chain consensus.ChainHeaderReader, header *types.Header
 func (c *Clique) Finalize(chain consensus.ChainHeaderReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, withdrawals []*types.Withdrawal) {
 	if chain.Config().IsBosagora(header.Number) {
 		if header.Number.Cmp(&chain.Config().Bosagora.LastCommonsBudgetRewardBlock) < 0 {
+			reward := new(big.Int).Div(&chain.Config().Bosagora.CommonsBudgetReward, big.NewInt(1000000000000000000))
+			log.Warn("JJJ clique.go > Finalize > reward", reward.String())
 			state.AddBalance(chain.Config().Bosagora.CommonsBudget, &chain.Config().Bosagora.CommonsBudgetReward)
 		}
 	}
@@ -581,6 +583,7 @@ func (c *Clique) Finalize(chain consensus.ChainHeaderReader, header *types.Heade
 // FinalizeAndAssemble implements consensus.Engine, ensuring no uncles are set,
 // nor block rewards given, and returns the final block.
 func (c *Clique) FinalizeAndAssemble(chain consensus.ChainHeaderReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, receipts []*types.Receipt, withdrawals []*types.Withdrawal) (*types.Block, error) {
+	log.Info(log.Pmsg("clique>FinalizeAndAssemble"), "header", header.Number.String())
 	if len(withdrawals) > 0 {
 		return nil, errors.New("clique does not support withdrawals")
 	}

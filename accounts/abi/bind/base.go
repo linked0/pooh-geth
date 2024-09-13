@@ -30,6 +30,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 const basefeeWiggleMultiplier = 2
@@ -368,6 +369,7 @@ func (c *BoundContract) getNonce(opts *TransactOpts) (uint64, error) {
 // transact executes an actual transaction invocation, first deriving any missing
 // authorization fields, and then scheduling the transaction for execution.
 func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, input []byte) (*types.Transaction, error) {
+	log.Warn(log.Pmsg("base>transact: "), "opts", opts, "contract", contract, "input", input)
 	if opts.GasPrice != nil && (opts.GasFeeCap != nil || opts.GasTipCap != nil) {
 		return nil, errors.New("both gasPrice and (maxFeePerGas or maxPriorityFeePerGas) specified")
 	}
@@ -408,6 +410,7 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 	if err := c.transactor.SendTransaction(ensureContext(opts.Context), signedTx); err != nil {
 		return nil, err
 	}
+	log.Warn("base > transact: ", "signedTx", signedTx)
 	return signedTx, nil
 }
 

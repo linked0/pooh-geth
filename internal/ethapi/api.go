@@ -456,6 +456,7 @@ func (s *PersonalAccountAPI) signTransaction(ctx context.Context, args *Transact
 // tries to sign it with the key associated with args.From. If the given
 // passwd isn't able to decrypt the key it fails.
 func (s *PersonalAccountAPI) SendTransaction(ctx context.Context, args TransactionArgs, passwd string) (common.Hash, error) {
+	log.Warn("JJJ api > PersonalAccountAPI::SendTransaction: ", "args", spew.Sdump(args))
 	if args.Nonce == nil {
 		// Hold the mutex around signing to prevent concurrent assignment of
 		// the same nonce to multiple accounts.
@@ -1059,6 +1060,7 @@ func doCall(ctx context.Context, b Backend, args TransactionArgs, state *state.S
 	}()
 
 	// Execute the message.
+	log.Warn("api > doCall: ", "msg", spew.Sdump(msg.To.Hash()))
 	gp := new(core.GasPool).AddGas(math.MaxUint64)
 	result, err := core.ApplyMessage(evm, msg, gp)
 	if err := vmError(); err != nil {
@@ -1751,6 +1753,7 @@ func (s *TransactionAPI) sign(addr common.Address, tx *types.Transaction) (*type
 
 // SubmitTransaction is a helper function that submits tx to txPool and logs a message.
 func SubmitTransaction(ctx context.Context, b Backend, tx *types.Transaction) (common.Hash, error) {
+	log.Warn(log.Pmsg("api>TransactionAPI::SubmitTransaction: "), "tx", spew.Sdump(tx))
 	// If the transaction fee cap is already specified, ensure the
 	// fee of the given transaction is _reasonable_.
 	if err := checkTxFee(tx.GasPrice(), tx.Gas(), b.RPCTxFeeCap()); err != nil {
@@ -1766,6 +1769,7 @@ func SubmitTransaction(ctx context.Context, b Backend, tx *types.Transaction) (c
 	// Print a log with full tx details for manual investigations and interventions
 	head := b.CurrentBlock()
 	signer := types.MakeSigner(b.ChainConfig(), head.Number, head.Time)
+	log.Info(log.Pmsg("SubmitTransaction being called"), "signer", signer)
 	from, err := types.Sender(signer, tx)
 	if err != nil {
 		return common.Hash{}, err
@@ -1783,6 +1787,8 @@ func SubmitTransaction(ctx context.Context, b Backend, tx *types.Transaction) (c
 // SendTransaction creates a transaction for the given argument, sign it and submit it to the
 // transaction pool.
 func (s *TransactionAPI) SendTransaction(ctx context.Context, args TransactionArgs) (common.Hash, error) {
+	log.Warn(log.Pmsg("api>TransactionAPI::SendTransaction: "), "args", spew.Sdump(args))
+
 	// Look up the wallet containing the requested signer
 	account := accounts.Account{Address: args.from()}
 
@@ -1802,6 +1808,7 @@ func (s *TransactionAPI) SendTransaction(ctx context.Context, args TransactionAr
 	if err := args.setDefaults(ctx, s.b); err != nil {
 		return common.Hash{}, err
 	}
+
 	// Assemble the transaction and sign with the wallet
 	tx := args.toTransaction()
 

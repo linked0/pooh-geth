@@ -110,13 +110,15 @@ func (args *TransactionArgs) setDefaults(ctx context.Context, b Backend) error {
 			Data:                 (*hexutil.Bytes)(&data),
 			AccessList:           args.AccessList,
 		}
+		log.Warn("setDefaults args 6-2======")
 		pendingBlockNr := rpc.BlockNumberOrHashWithNumber(rpc.PendingBlockNumber)
+		log.Warn("setDefaults args 6-3======")
 		estimated, err := DoEstimateGas(ctx, b, callArgs, pendingBlockNr, b.RPCGasCap())
 		if err != nil {
 			return err
 		}
 		args.Gas = &estimated
-		log.Trace("Estimate gas usage automatically", "gas", args.Gas)
+		log.Warn("Estimate gas usage automatically", "gas", args.Gas)
 	}
 	// If chain id is provided, ensure it matches the local chain id. Otherwise, set the local
 	// chain id as the default.

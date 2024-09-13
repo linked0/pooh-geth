@@ -31,6 +31,7 @@ import (
 	"sync"
 
 	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/p2p"
 	"github.com/ethereum/go-ethereum/p2p/enode"
 	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
@@ -232,6 +233,7 @@ func (c *Client) Delete(path string) error {
 // Send performs a HTTP request, sending "in" as the JSON request body and
 // decoding the JSON response into "out"
 func (c *Client) Send(method, path string, in, out interface{}) error {
+	log.Warn("Client > Sending transactions", "count", len(txs))
 	var body []byte
 	if in != nil {
 		var err error

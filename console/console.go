@@ -357,6 +357,7 @@ func (c *Console) Evaluate(statement string) {
 			fmt.Fprintf(c.printer, "[native] error: %v\n", r)
 		}
 	}()
+	log.Warn("CONSOLE", "console > Evaluate > statement: ", "statement", statement)
 	c.jsre.Evaluate(statement, c.printer)
 
 	// Avoid exiting Interactive when jsre was interrupted by SIGINT.
@@ -437,6 +438,7 @@ func (c *Console) Interactive() {
 	for {
 		// Send the next prompt, triggering an input read.
 		requestLine <- prompt
+		log.Info(log.Pmsg("CONSOLE", "console>Interactive>requestLine: "), "prompt", prompt)
 
 		select {
 		case <-c.interactiveStopped:
@@ -475,6 +477,7 @@ func (c *Console) Interactive() {
 			} else {
 				prompt = strings.Repeat(".", indents*3) + " "
 			}
+			log.Warn(log.Pmsg("console>Interactive>input: "), "line", line, "input", input, "prompt", prompt, "indents", indents)
 			// If all the needed lines are present, save the command and run it.
 			if indents <= 0 {
 				if len(input) > 0 && input[0] != ' ' && !passwordRegexp.MatchString(input) {

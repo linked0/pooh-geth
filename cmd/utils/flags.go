@@ -1847,6 +1847,7 @@ func SetDNSDiscoveryDefaults(cfg *ethconfig.Config, genesis common.Hash) {
 // The second return value is the full node instance, which may be nil if the
 // node is running as a light client.
 func RegisterEthService(stack *node.Node, cfg *ethconfig.Config) (ethapi.Backend, *eth.Ethereum) {
+	log.Error(log.Pmsg("NewTxsEvent", "flags>RegisterEthService"))
 	if cfg.SyncMode == downloader.LightSync {
 		backend, err := les.New(stack, cfg)
 		if err != nil {
@@ -1890,6 +1891,7 @@ func RegisterFilterAPI(stack *node.Node, backend ethapi.Backend, ethcfg *ethconf
 	filterSystem := filters.NewFilterSystem(backend, filters.Config{
 		LogCacheSize: ethcfg.FilterLogCacheSize,
 	})
+	log.Error(log.Pmsg("NewTxsEvent", "flags>RegisterFilterAPI"))
 	stack.RegisterAPIs([]rpc.API{{
 		Namespace: "eth",
 		Service:   filters.NewFilterAPI(filterSystem, isLightClient),

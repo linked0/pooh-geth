@@ -254,6 +254,7 @@ func newWorker(config *Config, chainConfig *params.ChainConfig, engine consensus
 		resubmitAdjustCh:   make(chan *intervalAdjust, resubmitAdjustChanSize),
 	}
 	// Subscribe NewTxsEvent for tx pool
+	log.Error(log.Pmsg("NewTxsEvent", "worker>eth.TxPool().SubscribeNewTxsEvent"))
 	worker.txsSub = eth.TxPool().SubscribeNewTxsEvent(worker.txsCh)
 	// Subscribe events for blockchain
 	worker.chainHeadSub = eth.BlockChain().SubscribeChainHeadEvent(worker.chainHeadCh)
@@ -400,6 +401,7 @@ func recalcRecommit(minRecommit, prev time.Duration, target float64, inc bool) t
 
 // newWorkLoop is a standalone goroutine to submit new sealing work upon received events.
 func (w *worker) newWorkLoop(recommit time.Duration) {
+	log.Info(log.Pmsg("Miner new work loop started"), "recommit", recommit)
 	defer w.wg.Done()
 	var (
 		interrupt   *atomic.Int32
@@ -439,16 +441,19 @@ func (w *worker) newWorkLoop(recommit time.Duration) {
 	for {
 		select {
 		case <-w.startCh:
+			log.Info(log.Pmsg("Miner starting new work cycle"))
 			clearPending(w.chain.CurrentBlock().Number.Uint64())
 			timestamp = time.Now().Unix()
 			commit(commitInterruptNewHead)
 
 		case head := <-w.chainHeadCh:
+			log.Info(log.Pmsg("Miner new head arrived"), "number", head.Block.NumberU64())
 			clearPending(head.Block.NumberU64())
 			timestamp = time.Now().Unix()
 			commit(commitInterruptNewHead)
 
 		case <-timer.C:
+			log.Info(log.Pmsg("Miner recommitting work"), "timestamp", timestamp)
 			// If sealing is running resubmit a new work cycle periodically to pull in
 			// higher priced transactions. Disable this overhead for pending blocks.
 			if w.isRunning() && (w.chainConfig.Clique == nil || w.chainConfig.Clique.Period > 0) {
@@ -474,6 +479,7 @@ func (w *worker) newWorkLoop(recommit time.Duration) {
 			}
 
 		case adjust := <-w.resubmitAdjustCh:
+			log.Info(log.Pmsg("Miner recommit interval adjustment"), "ratio", adjust.ratio, "increase", adjust.inc)
 			// Adjust resubmit interval by feedback.
 			if adjust.inc {
 				before := recommit
@@ -512,6 +518,7 @@ func (w *worker) mainLoop() {
 	for {
 		select {
 		case req := <-w.newWorkCh:
+			log.Info(log.Pmsg("New sealing work arrived"), "timestamp", req.timestamp)
 			w.commitWork(req.interrupt, req.timestamp)
 
 		case req := <-w.getWorkCh:
@@ -540,6 +547,7 @@ func (w *worker) mainLoop() {
 				}
 				txset := types.NewTransactionsByPriceAndNonce(w.current.signer, txs, w.current.header.BaseFee)
 				tcount := w.current.tcount
+				log.Error(log.Pmsg("New transactions arrived"), "count", len(ev.Txs), "tcount", tcount)
 				w.commitTransactions(w.current, txset, nil)
 
 				// Only update the snapshot if any new transactions were added
@@ -732,6 +740,7 @@ func (w *worker) commitTransaction(env *environment, tx *types.Transaction) ([]*
 		snap = env.state.Snapshot()
 		gp   = env.gasPool.Gas()
 	)
+	log.Warn("Committing transaction", "hash", tx.Hash())
 	receipt, err := core.ApplyTransaction(w.chainConfig, w.chain, &env.coinbase, env.gasPool, env.state, env.header, tx, &env.header.GasUsed, *w.chain.GetVMConfig())
 	if err != nil {
 		env.state.RevertToSnapshot(snap)
@@ -1031,7 +1040,7 @@ func (w *worker) commit(env *environment, interval func(), update bool, start ti
 		// Create a local environment copy, avoid the data race with snapshot state.
 		// https://github.com/ethereum/go-ethereum/issues/24299
 		env := env.copy()
-		log.Info("Finalize with commit")
+		log.Warn("JJJ Finalize with commit")
 		// Withdrawals are set to nil here, because this is only called in PoW.
 		block, err := w.engine.FinalizeAndAssemble(w.chain, env.header, env.state, env.txs, nil, env.receipts, nil)
 		if err != nil {

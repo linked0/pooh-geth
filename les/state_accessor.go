@@ -27,6 +27,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/eth/tracers"
 	"github.com/ethereum/go-ethereum/light"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // noopReleaser is returned in case there is no operation expected
@@ -40,6 +41,9 @@ func (leth *LightEthereum) stateAtBlock(ctx context.Context, block *types.Block,
 
 // stateAtTransaction returns the execution environment of a certain transaction.
 func (leth *LightEthereum) stateAtTransaction(ctx context.Context, block *types.Block, txIndex int, reexec uint64) (*core.Message, vm.BlockContext, *state.StateDB, tracers.StateReleaseFunc, error) {
+	log.Warn("JJJ les > state_accessor > stateAtTransaction: ", "block", block.NumberU64(), "txIndex", txIndex)
+	log.Warn("JJJ les > state_accessor > stateAtTransaction: ", "block", block)
+
 	// Short circuit if it's genesis block.
 	if block.NumberU64() == 0 {
 		return nil, vm.BlockContext{}, nil, nil, errors.New("no transaction in genesis")

@@ -30,6 +30,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/internal/ethapi"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
@@ -63,6 +64,7 @@ type FilterAPI struct {
 
 // NewFilterAPI returns a new FilterAPI instance.
 func NewFilterAPI(system *FilterSystem, lightMode bool) *FilterAPI {
+	log.Error(log.Pmsg("NewTxsEvent", "api>NewFilterAPI"))
 	api := &FilterAPI{
 		sys:     system,
 		events:  NewEventSystem(system, lightMode),

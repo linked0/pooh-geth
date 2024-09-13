@@ -33,6 +33,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/eth"
 	"github.com/ethereum/go-ethereum/eth/ethconfig"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/node"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -646,6 +647,7 @@ func testAtFunctions(t *testing.T, client *rpc.Client) {
 }
 
 func testTransactionSender(t *testing.T, client *rpc.Client) {
+	log.Warn("ethclient_test > testTransactionSender")
 	ec := NewClient(client)
 	ctx := context.Background()
 

@@ -29,6 +29,7 @@ import (
 
 	"github.com/dop251/goja"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // JSRE is a JS runtime environment embedding the goja interpreter.
@@ -286,6 +287,7 @@ func MakeCallback(vm *goja.Runtime, fn func(Call) (goja.Value, error)) goja.Valu
 
 // Evaluate executes code and pretty prints the result to the specified output stream.
 func (re *JSRE) Evaluate(code string, w io.Writer) {
+	log.Warn("JJJ jsre > Evaluate: ", "code", code)
 	re.Do(func(vm *goja.Runtime) {
 		val, err := vm.RunString(code)
 		if err != nil {

@@ -26,6 +26,7 @@ import (
 	"github.com/ethereum/go-ethereum/consensus/misc"
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/ethereum/go-ethereum/trie"
@@ -350,6 +351,7 @@ func (beacon *Beacon) Finalize(chain consensus.ChainHeaderReader, header *types.
 
 	if chain.Config().IsBosagora(header.Number) {
 		if header.Number.Cmp(&chain.Config().Bosagora.LastCommonsBudgetRewardBlock) < 0 {
+			log.Error("JJJ consensus.go > Finalize > reward", &chain.Config().Bosagora.CommonsBudgetReward)
 			state.AddBalance(chain.Config().Bosagora.CommonsBudget, &chain.Config().Bosagora.CommonsBudgetReward)
 		}
 	}

@@ -445,6 +445,7 @@ func (es *EventSystem) handlePendingLogs(filters filterIndex, ev []*types.Log) {
 }
 
 func (es *EventSystem) handleTxsEvent(filters filterIndex, ev core.NewTxsEvent) {
+	log.Error(log.Pmsg("handleTxsEvent"))
 	for _, f := range filters[PendingTransactionsSubscription] {
 		f.txs <- ev.Txs
 	}
@@ -560,6 +561,7 @@ func (es *EventSystem) eventLoop() {
 	for {
 		select {
 		case ev := <-es.txsCh:
+			log.Info(log.Pmsg("filter_systerm>eventLoop>txsCh"))
 			es.handleTxsEvent(index, ev)
 		case ev := <-es.logsCh:
 			es.handleLogs(index, ev)

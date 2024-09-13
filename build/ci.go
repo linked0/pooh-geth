@@ -240,6 +240,9 @@ func doInstall(cmdline []string) {
 		copy(args, gobuild.Args)
 		args = append(args, "-o", executablePath(path.Base(pkg)))
 		args = append(args, pkg)
+		log.Printf("### building %s", pkg)
+		log.Printf("### args", args)
+		log.Printf("### !!!")
 		build.MustRun(&exec.Cmd{Path: gobuild.Path, Args: args, Env: gobuild.Env})
 	}
 }

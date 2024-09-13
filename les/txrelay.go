@@ -23,6 +23,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rlp"
 )
 
@@ -78,6 +79,7 @@ func (ltrx *lesTxRelay) unregisterPeer(p *serverPeer) {
 
 // send sends a list of transactions to at most a given number of peers.
 func (ltrx *lesTxRelay) send(txs types.Transactions, count int) {
+	log.Warn("Sending transactions", "count", len(txs), "peers", count)
 	sendTo := make(map[*serverPeer]types.Transactions)
 
 	ltrx.peerStartPos++ // rotate the starting position of the peer list
@@ -139,6 +141,7 @@ func (ltrx *lesTxRelay) send(txs types.Transactions, count int) {
 }
 
 func (ltrx *lesTxRelay) Send(txs types.Transactions) {
+	log.Warn("lesTxRelay > Sending transactions", "count", len(txs))
 	ltrx.lock.Lock()
 	defer ltrx.lock.Unlock()
 

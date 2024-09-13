@@ -20,6 +20,8 @@ import (
 	"errors"
 	"reflect"
 	"sync"
+
+	"github.com/ethereum/go-ethereum/log"
 )
 
 var errBadChannel = errors.New("event: Subscribe argument does not have sendable channel type")
@@ -119,12 +121,16 @@ func (f *Feed) remove(sub *feedSub) {
 // It returns the number of subscribers that the value was sent to.
 func (f *Feed) Send(value interface{}) (nsent int) {
 	rvalue := reflect.ValueOf(value)
+	log.Info(log.Pmsg("feed>Send"), "rvalue.Type()", rvalue.Type())
 
 	f.once.Do(func() { f.init(rvalue.Type()) })
 	if f.etype != rvalue.Type() {
 		panic(feedTypeError{op: "Send", got: rvalue.Type(), want: f.etype})
 	}
 
+	if rvalue.Type().Name() == "NewTxsEvent" {
+		log.Info(log.Pmsg("feed>Send"), "newTxsEvent", rvalue)
+	}
 	<-f.sendLock
 
 	// Add new cases from the inbox after taking the send lock.

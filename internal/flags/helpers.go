@@ -21,14 +21,17 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/internal/version"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/urfave/cli/v2"
 )
 
 // NewApp creates an app with sane defaults.
 func NewApp(usage string) *cli.App {
+	log.Error(log.Pmsg("flags>NewApp"))
 	git, _ := version.VCS()
 	app := cli.NewApp()
+	log.Error(log.Pmsg("flags>NewApp>after cli.NewApp"))
 	app.EnableBashCompletion = true
 	app.Version = params.VersionWithCommit(git.Commit, git.Date)
 	app.Usage = usage
@@ -37,6 +40,7 @@ func NewApp(usage string) *cli.App {
 		MigrateGlobalFlags(ctx)
 		return nil
 	}
+	log.Error(log.Pmsg("flags>NewApp>before return"))
 	return app
 }
 

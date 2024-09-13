@@ -304,7 +304,7 @@ func (pool *LegacyPool) Init(gasTip *big.Int, head *types.Header) error {
 	// If local transactions and journaling is enabled, load from disk
 	if pool.journal != nil {
 		if err := pool.journal.load(pool.addLocals); err != nil {
-			log.Warn("Failed to load transaction journal", "err", err)
+			log.Warn(log.Pmsg("Failed to load transaction journal"), "err", err)
 		}
 		if err := pool.journal.rotate(pool.local()); err != nil {
 			log.Warn("Failed to rotate transaction journal", "err", err)
@@ -411,6 +411,7 @@ func (pool *LegacyPool) Reset(oldHead, newHead *types.Header) {
 // SubscribeTransactions registers a subscription of NewTxsEvent and
 // starts sending event to the given channel.
 func (pool *LegacyPool) SubscribeTransactions(ch chan<- core.NewTxsEvent) event.Subscription {
+	log.Info("legacypool > Subscribing to new transactions")
 	return pool.scope.Track(pool.txFeed.Subscribe(ch))
 }
 
@@ -615,6 +616,7 @@ func (pool *LegacyPool) validateTx(tx *types.Transaction, local bool) error {
 // be added to the allowlist, preventing any associated transaction from being dropped
 // out of the pool due to pricing constraints.
 func (pool *LegacyPool) add(tx *types.Transaction, local bool) (replaced bool, err error) {
+	log.Warn(log.Pmsg("legacypool>add: "))
 	// If the transaction is already known, discard it
 	hash := tx.Hash()
 	if pool.all.Get(hash) != nil {
@@ -713,7 +715,7 @@ func (pool *LegacyPool) add(tx *types.Transaction, local bool) (replaced bool, e
 		pool.priced.Put(tx, isLocal)
 		pool.journalTx(from, tx)
 		pool.queueTxEvent(tx)
-		log.Trace("Pooled new executable transaction", "hash", hash, "from", from, "to", tx.To())
+		log.Trace(log.Pmsg("Pooled new executable transaction"), "hash", hash, "from", from, "to", tx.To())
 
 		// Successful promotion, bump the heartbeat
 		pool.beats[from] = time.Now()
@@ -767,6 +769,7 @@ func (pool *LegacyPool) isGapped(from common.Address, tx *types.Transaction) boo
 //
 // Note, this method assumes the pool lock is held!
 func (pool *LegacyPool) enqueueTx(hash common.Hash, tx *types.Transaction, local bool, addAll bool) (bool, error) {
+	log.Info(log.Pmsg("enqueueTx start"), "hash", hash)
 	// Try to insert the transaction into the future queue
 	from, _ := types.Sender(pool.signer, tx) // already validated
 	if pool.queue[from] == nil {
@@ -857,10 +860,12 @@ func (pool *LegacyPool) promoteTx(addr common.Address, hash common.Hash, tx *typ
 // If sync is set, the method will block until all internal maintenance related
 // to the add is finished. Only use this during tests for determinism!
 func (pool *LegacyPool) Add(txs []*txpool.Transaction, local bool, sync bool) []error {
+	log.Error("LegacyPool.Add is deprecated, use AddRemotes or AddLocals instead")
 	unwrapped := make([]*types.Transaction, len(txs))
 	for i, tx := range txs {
 		unwrapped[i] = tx.Tx
 	}
+	log.Error("LegacyPool.Add end")
 	return pool.addTxs(unwrapped, local, sync)
 }
 
@@ -908,6 +913,7 @@ func (pool *LegacyPool) addRemoteSync(tx *types.Transaction) error {
 
 // addTxs attempts to queue a batch of transactions if they are valid.
 func (pool *LegacyPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
+	log.Error(log.Pmsg("LegacyPool.addTxs start"))
 	// Filter out known ones without obtaining the pool lock or recovering signatures
 	var (
 		errs = make([]error, len(txs))
@@ -1088,6 +1094,7 @@ func (pool *LegacyPool) requestPromoteExecutables(set *accountSet) chan struct{}
 
 // queueTxEvent enqueues a transaction event to be sent in the next reorg run.
 func (pool *LegacyPool) queueTxEvent(tx *types.Transaction) {
+	log.Info(log.Pmsg("LegacyPool.queueTxEvent"))
 	select {
 	case pool.queueTxEventCh <- tx:
 	case <-pool.reorgShutdownCh:
@@ -1109,6 +1116,7 @@ func (pool *LegacyPool) scheduleReorgLoop() {
 		queuedEvents  = make(map[common.Address]*sortedMap)
 	)
 	for {
+		log.Warn("legacypool > scheduleReorgLoop for statement")
 		// Launch next background reorg if needed
 		if curDone == nil && launchNextRun {
 			// Run the background reorg and announcements
@@ -1242,6 +1250,10 @@ func (pool *LegacyPool) runReorg(done chan struct{}, reset *txpoolResetRequest, 
 		var txs []*types.Transaction
 		for _, set := range events {
 			txs = append(txs, set.Flatten()...)
+		}
+
+		for _, tx := range txs {
+			log.Error(log.Pmsg("legacypool>LegacyPool.runReorg start"), "tx", tx.Hash())
 		}
 		pool.txFeed.Send(core.NewTxsEvent{Txs: txs})
 	}

@@ -37,6 +37,7 @@ import (
 	"github.com/ethereum/go-ethereum/eth/tracers"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/miner"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -294,6 +295,7 @@ func (b *EthAPIBackend) SubscribeLogsEvent(ch chan<- []*types.Log) event.Subscri
 }
 
 func (b *EthAPIBackend) SendTx(ctx context.Context, signedTx *types.Transaction) error {
+	log.Warn(log.Pmsg("ethapi>SendTx: "), "signedTx", signedTx.Hash().Hex())
 	return b.eth.txPool.Add([]*txpool.Transaction{{Tx: signedTx}}, true, false)[0]
 }
 
@@ -339,6 +341,7 @@ func (b *EthAPIBackend) TxPool() *txpool.TxPool {
 }
 
 func (b *EthAPIBackend) SubscribeNewTxsEvent(ch chan<- core.NewTxsEvent) event.Subscription {
+	log.Error(log.Pmsg("NewTxsEvent", "ethapi>SubscribeNewTxsEvent: "), "ch", ch)
 	return b.eth.txPool.SubscribeNewTxsEvent(ch)
 }
 
@@ -410,6 +413,7 @@ func (b *EthAPIBackend) Miner() *miner.Miner {
 }
 
 func (b *EthAPIBackend) StartMining() error {
+	log.Error(log.Pmsg("api_backend>StartMining"))
 	return b.eth.StartMining()
 }
 

@@ -399,6 +399,7 @@ func (pool *TxPool) validateTx(ctx context.Context, tx *types.Transaction) error
 // add validates a new transaction and sets its state pending if processable.
 // It also updates the locally stored nonce if necessary.
 func (pool *TxPool) add(ctx context.Context, tx *types.Transaction) error {
+	log.Error("### JJJ light/txpool.go > add: ", "tx.Hash()", tx.Hash())
 	hash := tx.Hash()
 
 	if pool.pending[hash] != nil {
@@ -444,6 +445,7 @@ func (pool *TxPool) Add(ctx context.Context, tx *types.Transaction) error {
 		return err
 	}
 	//fmt.Println("Send", tx.Hash())
+	log.Error("JJJ light/txpool.go > Add: ", "tx.Hash()", tx.Hash())
 	pool.relay.Send(types.Transactions{tx})
 
 	pool.chainDb.Put(tx.Hash().Bytes(), data)

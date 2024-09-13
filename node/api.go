@@ -156,6 +156,7 @@ func (api *adminAPI) PeerEvents(ctx context.Context) (*rpc.Subscription, error) 
 
 // StartHTTP starts the HTTP RPC API server.
 func (api *adminAPI) StartHTTP(host *string, port *int, cors *string, apis *string, vhosts *string) (bool, error) {
+	log.Info(log.Pmsg("Starting HTTP endpoint"), "url", api.node.HTTPEndpoint())
 	api.node.lock.Lock()
 	defer api.node.lock.Unlock()
 

@@ -526,6 +526,8 @@ func (api *API) IntermediateRoots(ctx context.Context, hash common.Hash, config 
 		vmctx              = core.NewEVMBlockContext(block.Header(), api.chainContext(ctx), nil)
 		deleteEmptyObjects = chainConfig.IsEIP158(block.Number())
 	)
+
+	log.Warn("JJJ tracers > api > IntermediateRoots: ", "block", block.NumberU64(), "txs", len(block.Transactions()))
 	for i, tx := range block.Transactions() {
 		if err := ctx.Err(); err != nil {
 			return nil, err

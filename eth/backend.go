@@ -105,6 +105,8 @@ type Ethereum struct {
 // New creates a new Ethereum object (including the
 // initialisation of the common Ethereum object)
 func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
+	log.Error(log.Pmsg("NewTxsEvent", "backend>New"))
+
 	// Ensure configuration values are compatible and sane
 	if config.SyncMode == downloader.LightSync {
 		return nil, errors.New("can't run eth.Ethereum in light sync mode, use les.LightEthereum")
@@ -231,6 +233,7 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 		return nil, err
 	}
 
+	log.Error(log.Pmsg("NewTxsEvent:Miner", "backend>New>miner.New"))
 	eth.miner = miner.New(eth, &config.Miner, eth.blockchain.Config(), eth.EventMux(), eth.engine, eth.isLocalBlock)
 	eth.miner.SetExtra(makeExtraData(config.Miner.ExtraData))
 
@@ -259,6 +262,7 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 	eth.netRPCService = ethapi.NewNetAPI(eth.p2pServer, config.NetworkId)
 
 	// Register the backend on the node
+	log.Error(log.Pmsg("NewTxsEvent", "backend>New>stack.RegisterAPIs(eth.APIs())"))
 	stack.RegisterAPIs(eth.APIs())
 	stack.RegisterProtocols(eth.Protocols())
 	stack.RegisterLifecycle(eth)
@@ -400,6 +404,7 @@ func (s *Ethereum) SetEtherbase(etherbase common.Address) {
 // is already running, this method adjust the number of threads allowed to use
 // and updates the minimum price required by the transaction pool.
 func (s *Ethereum) StartMining() error {
+	log.Error(log.Pmsg("backend>StartMining"), "s.IsMining()", s.IsMining())
 	// If the miner was not running, initialize it
 	if !s.IsMining() {
 		// Propagate the initial price point to the transaction pool

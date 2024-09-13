@@ -196,6 +196,8 @@ var (
 var app = flags.NewApp("the go-ethereum command line interface")
 
 func init() {
+	log.Error(log.Pmsg("geth>init"))
+
 	// Initialize the CLI app and start Geth
 	app.Action = geth
 	app.Copyright = "Copyright 2013-2023 The go-ethereum Authors"
@@ -253,6 +255,7 @@ func init() {
 }
 
 func main() {
+	log.Error(log.Pmsg("geth>main"))
 	if err := app.Run(os.Args); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -319,9 +322,9 @@ func prepare(ctx *cli.Context) {
 // It creates a default node based on the command line arguments and runs it in
 // blocking mode, waiting for it to be shut down.
 func geth(ctx *cli.Context) error {
-	fmt.Println("Jay: geth 2024", ctx.Args().Slice())
+	log.Error("JJJ main > geth > 2024", ctx.Args().Slice())
 	if args := ctx.Args().Slice(); len(args) > 0 {
-		return fmt.Errorf("Jay:Invalid command: %q", args[0])
+		return fmt.Errorf("JJJ:Invalid command: %q", args[0])
 	}
 
 	prepare(ctx)
@@ -337,6 +340,8 @@ func geth(ctx *cli.Context) error {
 // it unlocks any requested accounts, and starts the RPC/IPC interfaces and the
 // miner.
 func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend, isConsole bool) {
+	log.Error("JJJ main > startNode")
+
 	debug.Memsize.Add("node", stack)
 
 	// Start up the node itself

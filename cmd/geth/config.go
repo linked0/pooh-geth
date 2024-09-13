@@ -146,6 +146,7 @@ func loadBaseConfig(ctx *cli.Context) gethConfig {
 
 // makeConfigNode loads geth configuration and creates a blank node instance.
 func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
+	log.Error(log.Pmsg("NewTxsEvent", "config>makeConfigNode>starting..."))
 	cfg := loadBaseConfig(ctx)
 	stack, err := node.New(&cfg.Node)
 	if err != nil {
@@ -167,6 +168,7 @@ func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 
 // makeFullNode loads geth configuration and creates the Ethereum backend.
 func makeFullNode(ctx *cli.Context) (*node.Node, ethapi.Backend) {
+	log.Error(log.Pmsg("NewTxsEvent", "config>makeFullNode>calling makeConfigNode..."))
 	stack, cfg := makeConfigNode(ctx)
 	if ctx.IsSet(utils.OverrideCancun.Name) {
 		v := ctx.Uint64(utils.OverrideCancun.Name)

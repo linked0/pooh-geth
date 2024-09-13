@@ -492,6 +492,7 @@ func (f *faucet) apiHandler(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 			// Submit the transaction and mark as funded if successful
+			log.Warn("JJJ faucet > apiHander > Funded user request", "user", username)
 			if err := f.client.SendTransaction(context.Background(), signed); err != nil {
 				f.lock.Unlock()
 				if err = sendError(wsconn, err); err != nil {
@@ -500,6 +501,7 @@ func (f *faucet) apiHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				continue
 			}
+			log.Warn("JJJ faucet > apiHander > Funded user request", "user", username, "address", address.Hex(), "tier", msg.Tier, "amount", amount)
 			f.reqs = append(f.reqs, &request{
 				Avatar:  avatar,
 				Account: address,

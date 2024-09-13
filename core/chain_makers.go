@@ -28,6 +28,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/trie"
 )
@@ -94,6 +95,7 @@ func (b *BlockGen) SetPoS() {
 // - bc:       enables the ability to query historical block hashes for BLOCKHASH
 // - vmConfig: extends the flexibility for customizing evm rules, e.g. enable extra EIPs
 func (b *BlockGen) addTx(bc *BlockChain, vmConfig vm.Config, tx *types.Transaction) {
+	log.Error("JJJ core > BlockGen > addTx: ", "tx", tx)
 	if b.gasPool == nil {
 		b.SetCoinbase(common.Address{})
 	}

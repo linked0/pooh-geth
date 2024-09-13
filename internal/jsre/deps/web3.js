@@ -4398,6 +4398,7 @@ HttpProvider.prototype.sendAsync = function (payload, callback) {
   };
 
   try {
+    console.log('###JAY payload', JSON.stringify(payload));
     request.send(JSON.stringify(payload));
   } catch (error) {
     callback(errors.InvalidConnection(this.host));
@@ -4411,6 +4412,7 @@ HttpProvider.prototype.sendAsync = function (payload, callback) {
  * @return {Boolean} returns true if request haven't failed. Otherwise false
  */
 HttpProvider.prototype.isConnected = function () {
+  console.log('###JAY isConnected');
   try {
     this.send({
       id: 9999999999,

@@ -1,7 +1,10 @@
 package log
 
 import (
+	"fmt"
 	"os"
+	"runtime"
+	"strings"
 )
 
 var (
@@ -23,6 +26,23 @@ func New(ctx ...interface{}) Logger {
 // Root returns the root logger
 func Root() Logger {
 	return root
+}
+
+func Pmsg(msgs ...string) string {
+	_, file, line, _ := runtime.Caller(1)
+	parts := strings.Split(file, "/")
+	// Get the last element
+	lastParts := parts[3:]
+	lastPath := strings.Join(lastParts, "/")
+	category := ""
+	var msg string
+	if len(msgs) > 1 {
+		category = category + msgs[0]
+		msg = msgs[1]
+	}
+	pathMsg := fmt.Sprintf("###%s %s %s%s:%d", category, msg, HOME, lastPath, line)
+
+	return pathMsg
 }
 
 // The following functions bypass the exported logger methods (logger.Debug,

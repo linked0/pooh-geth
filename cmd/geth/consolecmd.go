@@ -23,6 +23,7 @@ import (
 	"github.com/ethereum/go-ethereum/cmd/utils"
 	"github.com/ethereum/go-ethereum/console"
 	"github.com/ethereum/go-ethereum/internal/flags"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/urfave/cli/v2"
 )
 
@@ -68,6 +69,7 @@ JavaScript API. See https://geth.ethereum.org/docs/interacting-with-geth/javascr
 // localConsole starts a new geth node, attaching a JavaScript console to it at the
 // same time.
 func localConsole(ctx *cli.Context) error {
+	log.Error(log.Pmsg("NetTxsEvent", "consolecmd>localConsole>starting..."), "ctx.Args().Len()", ctx.Args().Len())
 	// Create and start the node based on the CLI flags
 	prepare(ctx)
 	stack, backend := makeFullNode(ctx)
@@ -89,6 +91,7 @@ func localConsole(ctx *cli.Context) error {
 	defer console.Stop(false)
 
 	// If only a short execution was requested, evaluate and return.
+	log.Error(log.Pmsg("CONSOLE", "consolecmd>localConsole>ctx.String(utils.ExecFlag.Name)", ctx.String(utils.ExecFlag.Name)))
 	if script := ctx.String(utils.ExecFlag.Name); script != "" {
 		console.Evaluate(script)
 		return nil

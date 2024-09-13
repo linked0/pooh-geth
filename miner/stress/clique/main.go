@@ -46,6 +46,7 @@ import (
 )
 
 func main() {
+	log.Error(log.Pmsg("clique>main"))
 	log.Root().SetHandler(log.LvlFilterHandler(log.LvlInfo, log.StreamHandler(os.Stderr, log.TerminalFormat(true))))
 	fdlimit.Raise(2048)
 

@@ -22,6 +22,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // MinerAPI provides an API to control the miner.
@@ -40,6 +41,7 @@ func NewMinerAPI(e *Ethereum) *MinerAPI {
 // number of threads allowed to use and updates the minimum price required by the
 // transaction pool.
 func (api *MinerAPI) Start() error {
+	log.Error(log.Pmsg("api_miner>Start"))
 	return api.e.StartMining()
 }
 

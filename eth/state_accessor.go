@@ -64,6 +64,8 @@ func (eth *Ethereum) StateAtBlock(ctx context.Context, block *types.Block, reexe
 		report   = true
 		origin   = block.NumberU64()
 	)
+	log.Warn("JJJ eth > state_accessor > StateAtBlock: ", "block", block.NumberU64())
+
 	// The state is only for reading purposes, check the state presence in
 	// live database.
 	if readOnly {
@@ -194,6 +196,8 @@ func (eth *Ethereum) stateAtTransaction(ctx context.Context, block *types.Block,
 	if block.NumberU64() == 0 {
 		return nil, vm.BlockContext{}, nil, nil, errors.New("no transaction in genesis")
 	}
+	log.Warn("JJJ eth > state_accessor > stateAtTransaction: ", "block", block.NumberU64(), "txIndex", txIndex)
+	log.Warn("JJJ eth > state_accessor > stateAtTransaction: ", "block", block)
 	// Create the parent state database
 	parent := eth.blockchain.GetBlock(block.ParentHash(), block.NumberU64()-1)
 	if parent == nil {

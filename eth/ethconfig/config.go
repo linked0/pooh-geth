@@ -31,6 +31,7 @@ import (
 	"github.com/ethereum/go-ethereum/eth/downloader"
 	"github.com/ethereum/go-ethereum/eth/gasprice"
 	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/miner"
 	"github.com/ethereum/go-ethereum/params"
 )
@@ -161,6 +162,7 @@ type Config struct {
 // Clique is allowed for now to live standalone, but ethash is forbidden and can
 // only exist on already merged networks.
 func CreateConsensusEngine(config *params.ChainConfig, db ethdb.Database) (consensus.Engine, error) {
+	log.Error(log.Pmsg("ethconfig>CreateConsensusEngine"))
 	// If proof-of-authority is requested, set it up
 	if config.Clique != nil {
 		return beacon.New(clique.New(config.Clique, db)), nil

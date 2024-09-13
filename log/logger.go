@@ -15,6 +15,8 @@ const ctxKey = "ctx"
 const errorKey = "LOG15_ERROR"
 const skipLevel = 2
 
+const HOME = "/Users/jay/work/pooh-geth/"
+
 type Lvl int
 
 const (
