@@ -4,6 +4,7 @@ then
     echo "No parameter passed"
     echo "Usage: ./init testnet 1"
     echo "Usage: ./init mainnet 1"
+    echo "Usage: ./init testnet-london 1"
     exit
 else
     echo "Config: $1"
@@ -40,6 +41,10 @@ elif [ "$config" = "testnet" ]
 then
   config_folder="config"
   genesis_file="genesis_testnet.json"
+elif [ "$config" = "testnet-london" ]
+then
+  config_folder="config"
+  genesis_file="genesis_testnet_london.json"
 elif [ "$config" = "console" ]
 then
   config_folder="config"

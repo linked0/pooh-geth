@@ -31,11 +31,17 @@ cd poohnet
 ```
 
 ### init node
-노드가 하나인 테스트넷을 실행시킬때
-```
-./init testnet 1
-```
-
+- 노드가 하나인 테스트넷을 실행시킬때
+- Applied cancun upgrade to `genesis_testnet.json`
+    ```
+    ./init testnet 1
+    ```
+- If you want run `geth` with old london fork, use this command
+    ```
+    ./init testnet-london 1
+    ```
+    - This uses `genesis_testnet_london.json`.
+ 
 `Password:` 프롬프트에 대해서는 로컬시스템 사용자 계정 암호를 입력
 
 ### run node
