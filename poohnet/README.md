@@ -73,6 +73,11 @@ init은 위의 [Run Testnet](#run-testnet) 참고
 ./enode-cmd
 ```
 
+## Deterministic Deployment Proxy
+- https://github.com/linked0/deterministic-deployment-proxy
+  - `Usage` and `Jay's comment`대로 진행
+
+
 ## PoohnetFund constract 적용 (for Testnet)
 ### network stop
 ```
