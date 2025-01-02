@@ -41,6 +41,10 @@ elif [ "$config" = "testnet" ]
 then
   config_folder="config"
   genesis_file="genesis_testnet.json"
+elif [ "$config" = "localnet" ]
+then
+  config_folder="config"
+  genesis_file="genesis_localnet.json"
 elif [ "$config" = "marigold" ]
 then
   config_folder="config"
