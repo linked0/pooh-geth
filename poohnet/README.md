@@ -74,9 +74,50 @@ init은 위의 [Run Testnet](#run-testnet) 참고
 ```
 
 ## Deterministic Deployment Proxy
-- https://github.com/linked0/deterministic-deployment-proxy
-  - `Usage` and `Jay's comment`대로 진행
+### Temp deployer에 대한 account를 unlock
+새로운 계정을 만든다.
+```
+geth account new --datadir ~/.pooh/el   
+```
+`~/work/web` 폴더를 이동해서 `.env` 파일에서 위 명령으로 얻은 새로운 주소와 패스워드 입력
+```
+UNLOCK_ACCOUNT=0x84694d79E241B8ad19BD2cD994610d997D8B4c56
+PRIVATE_KEY_PASSWORD=xxx
+```
+다음의 스크립트로 unlock
+```
+npx hardhat run scripts/unlock-account.ts --network localnet
+```
 
+### Deterministic Deployment Proxy 배포
+위의 UNLOCK_ACCOUNT를 .env의 MY_ADDRESS에 복사
+```
+MY_ADDRESS="0x84694d79E241B8ad19BD2cD994610d997D8B4c56"
+```
+
+다음 스크립트로 Deployer 배포
+```
+cd poohnet
+./deploy-deployer.sh localnet
+```
+
+다음의 스크립트로 Deployer 컨트랙트가 잘 배포되었는지 확인위해서, 테스트 컨트랙트를 배포하고, `MY_CONTRACT_ADDRESS`를 .env에 입력. 
+- `SALT_HEX="$(cast --to-bytes32 0 | sed 's/^0x//')"`부분에서 숫자 `0`을 바꾸어 쓸 수 있음.
+```
+./deploy-test-contract.sh localnet
+```
+
+
+```
+MY_CONTRACT_ADDRESS=0xfb2cf050f13782972db574f970e9d429cda1a984
+```
+
+테스트 컨트랙트가 잘 배포되었는지 확인.
+```
+./check-test-contract.sh localnet
+
+{"jsonrpc":"2.0","id":1,"result":"0x000000000000000000000000000000000000000000000000000000000000002a"}
+```
 
 ## PoohnetFund constract 적용 (for Testnet)
 ### network stop
