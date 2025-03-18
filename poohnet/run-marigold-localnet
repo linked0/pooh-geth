@@ -1,10 +1,11 @@
 #!/bin/sh
 
 sudo geth \
+--port=30305 \
 --datadir=$HOME/.marigold/el \
 --syncmode=full \
 --networkid=12309 \
---bootnodes="enode://6d59a1ce195d9251e8f5234b3dbd486cf15eeac6cb8199898af3e11b9b7f5c54e334317d1cc3ab8077360383bc08b8aa93299ccb169b55dbea59414847dbce2d@13.209.149.243:30303" \
+--bootnodes="enode://6d59a1ce195d9251e8f5234b3dbd486cf15eeac6cb8199898af3e11b9b7f5c54e334317d1cc3ab8077360383bc08b8aa93299ccb169b55dbea59414847dbce2d@13.209.149.243:30305" \
 --allow-insecure-unlock=true \
 --unlock=0x8532654aD638Db3deE3836B22B35f7Ca707428ca \
 --password=./password.txt \
